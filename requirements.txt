@@ -4,3 +4,4 @@ opencv-python
 python-dotenv
 PyGithub
 uvicorn
+python-multipart
