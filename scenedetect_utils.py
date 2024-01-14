@@ -3,7 +3,7 @@ import cv2
 import os
 import base64
 from github import Github
-
+import uuid
 def find_scenes(file, threshold=27.0):
     with open("temp_video.mp4", "wb") as video_file:
         video_file.write(file.file.read())
@@ -25,18 +25,23 @@ def find_scenes(file, threshold=27.0):
     return frame_numbers
 
 def extract_frames(video_file_path, frame_numbers):
-    frames_folder = "frames_temp"
+    frames_folder_uuid = str(uuid.uuid4())  # Generate UUID
+    frames_folder = f"frames_temp_{frames_folder_uuid}"
+    os.makedirs(frames_folder, exist_ok=True)
     os.makedirs(frames_folder, exist_ok=True)
 
     cap = cv2.VideoCapture(video_file_path)
     
+    frame_index = 0  # Initialize frame index
+
     for frame_num in frame_numbers:
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
         ret, frame = cap.read()
 
         if ret:
-            output_path = f"{frames_folder}/frame_{frame_num}.jpg"
+            output_path = f"{frames_folder}/frame_{frame_index}.jpg"
             cv2.imwrite(output_path, frame)
+            frame_index += 1  # Increment frame index
         else:
             print(f"Error reading frame {frame_num}")
 

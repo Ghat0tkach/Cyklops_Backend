@@ -8,31 +8,31 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Retrieve GitHub token and repo from environment variables
-github_token = os.getenv("GITHUB_TOKEN")
-github_repo = os.getenv("GITHUB_REPO")
+
 
 router = APIRouter()
 
 @router.post("/detect-scenes/")
 async def detect_scenes(file: UploadFile = File(...), threshold: float = 27.0):
     try:
+        github_token = os.getenv("GITHUB_TOKEN")
+        github_repo = os.getenv("GITHUB_REPO")
         # Get the frame numbers
         frames_to_extract = find_scenes(file, threshold=threshold)
 
         # Extract frames and upload to GitHub
         output_directory = extract_frames("temp_video.mp4", frames_to_extract)
-        upload_frames_to_github(output_directory, github_token , github_repo)
+        upload_frames_to_github(output_directory, github_token, github_repo)
 
         return {"message": "Frames extracted and uploaded to GitHub", "output_directory": output_directory}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         # Optionally, you can delete the temporary file after processing
-        delete_temp_files_folder()
+    
         os.remove("temp_video.mp4")
 
-def delete_temp_files_folder():
-    temp_folder = "temp_videos"
+def delete_temp_files_folder(temp_folder):
     if os.path.exists(temp_folder):
         shutil.rmtree(temp_folder)
         print(f"Temporary files folder '{temp_folder}' deleted.")
