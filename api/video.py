@@ -2,6 +2,14 @@ import shutil
 import os
 from fastapi import APIRouter, File, UploadFile, HTTPException
 from scenedetect_utils import find_scenes, extract_frames, upload_frames_to_github
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Retrieve GitHub token and repo from environment variables
+github_token = os.getenv("GITHUB_TOKEN")
+github_repo = os.getenv("GITHUB_REPO")
 
 router = APIRouter()
 
@@ -13,7 +21,7 @@ async def detect_scenes(file: UploadFile = File(...), threshold: float = 27.0):
 
         # Extract frames and upload to GitHub
         output_directory = extract_frames("temp_video.mp4", frames_to_extract)
-        upload_frames_to_github(output_directory,github_token, github_repo)
+        upload_frames_to_github(output_directory, github_token , github_repo)
 
         return {"message": "Frames extracted and uploaded to GitHub", "output_directory": output_directory}
     except Exception as e:

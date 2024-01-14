@@ -1,0 +1,6 @@
+fastapi
+scenedetect
+opencv-python
+python-dotenv
+PyGithub
+uvicorn
