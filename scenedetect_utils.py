@@ -28,7 +28,6 @@ def extract_frames(video_file_path, frame_numbers):
     frames_folder_uuid = str(uuid.uuid4())  # Generate UUID
     frames_folder = f"frames_temp_{frames_folder_uuid}"
     os.makedirs(frames_folder, exist_ok=True)
-    os.makedirs(frames_folder, exist_ok=True)
 
     cap = cv2.VideoCapture(video_file_path)
     
@@ -61,8 +60,12 @@ def upload_image_to_github(repo, image_path, image_filename, folder_name):
     try:
         with open(image_path, "rb") as image_file:
             image_content = image_file.read()
-            content_base64 = base64.b64encode(image_content).decode("utf-8")
 
-        repo.create_file(f"{folder_name}/{image_filename}", f"Added {image_filename}", content_base64, branch="main")
+        repo.create_file(
+            f"{folder_name}/{image_filename}",
+            f"Added {image_filename}",
+            image_content,
+            branch="main",
+        )
     except Exception as e:
         print(f"Error uploading {image_filename} to GitHub: {str(e)}")
